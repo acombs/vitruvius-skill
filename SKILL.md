@@ -1,0 +1,208 @@
+---
+name: vitruvius
+description: >-
+  A quality-gated methodology for building an app (or any substantial software
+  artifact) from a goal + requirements. Plans the work, runs an adversarial
+  pre-mortem to harden the plan, defines acceptance rubrics UP FRONT (with
+  explicit taste and usability bars), then builds in phases — each passing a
+  critique gate and a bounded remediation loop before the next, with human
+  checkpoints throughout. Use whenever the user hands over a goal and
+  requirements (maybe screenshots/references) and wants it built carefully
+  rather than fast — i.e. they want a rigorous, methodical, "do it right",
+  design-quality, or production-grade build, ask for a plan or pre-mortem before
+  coding, want success criteria or rubrics defined, or care about
+  taste/usability/UX quality. Trigger even if they don't say "vitruvius" by
+  name, as long as they're describing a deliberate, quality-critical build from
+  requirements. Do NOT use for quick one-off scripts, small edits, or when the
+  user explicitly wants speed over rigor.
+---
+
+# Vitruvius
+
+A harness for turning *"here's what I want, here are the requirements"* into a
+built artifact that a great team would be proud to ship — by making the plan
+survive an adversarial pre-mortem, committing to an explicit quality bar
+*before* writing code, and refusing to advance past a phase until it clears that
+bar (or you, the human, override).
+
+Named for the Roman architect whose treatise held that good building must have
+*firmitas, utilitas, venustas* — be **durable, useful, and beautiful**. That is
+this skill's quality bar too: the rubrics judge robustness, usability, and taste,
+and a phase advances only when all three hold.
+
+The core conviction: **the bar is set before the work, judged by someone other
+than the builder, against the running thing — not the code.** Most quality
+failures come from grading your own homework after the fact and quietly lowering
+the bar to match what you built.
+
+## When to use this
+
+Use it for deliberate, quality-critical builds from a stated goal + requirements
+— especially when taste and usability matter. Don't use it for throwaway scripts
+or tiny edits; the ceremony will cost more than it returns.
+
+## The lifecycle at a glance
+
+```
+0. INTAKE      → capture goal, users, non-goals, references, taste north-star   ┐
+1. PLAN        → decompose into phases (the agent sizes the phases)             │ setup
+2. PRE-MORTEM  → adversarially attack the plan, revise, converge                │
+3. RUBRICS     → define per-phase acceptance bar UP FRONT (hybrid format)       ┘
+   ── HUMAN CHECKPOINT: approve plan + rubrics before any code ──
+┌─ per phase ───────────────────────────────────────────────────────┐
+│ 4. BUILD      → implement the phase                                 │
+│ 5. CRITIQUE   → separate critic scores it against the rubric        │
+│ 6. REMEDIATE  → fix the defect list; re-score; ≤3 rounds, early-exit│
+│    ── HUMAN CHECKPOINT: sign off the gate (or escalate on failure) ─│
+└────────────────────────────────────────────────────────────────────┘
+8. RETRO       → what to change about the *methodology* next time
+```
+
+At any point, if the goal or a requirement is genuinely ambiguous, **stop and
+ask** (see Human-in-the-loop below).
+
+## State lives on disk
+
+Agent context is fragile across a long build, so the artifacts *are* the memory
+and the audit trail. Create a `.vitruvius/` directory in the target project
+and write everything there:
+
+```
+.vitruvius/
+├── spec.md            # stage 0
+├── plan.md            # stage 1 (updated by stage 2)
+├── premortem.md       # stage 2
+├── rubric.md          # stage 3 (one rubric block per phase)
+├── phase-<n>-eval.md  # stage 5/6, appended each remediation round
+└── retro.md           # stage 8
+```
+
+Templates for each live in `assets/templates/`. Read the template before writing
+the artifact the first time. Keep these files current — if you change the plan,
+update `plan.md`; later stages read from disk, not from memory.
+
+## Roles: builder vs critic
+
+A builder grading its own work grades leniently and rationalizes. Keep the roles
+separate:
+
+- **Builder** — does stages 0, 1, 4, 6. The implementer.
+- **Critic** — does stages 2 (pre-mortem) and 5 (critique gate). Adversarial
+  brief: its job is to find what's wrong, not to be encouraging.
+
+If subagents are available, run the critic as a *separate subagent* with only the
+spec, rubric, and evidence — not the builder's reasoning — so it can't inherit
+the builder's blind spots. If subagents aren't available, switch roles
+explicitly ("Now acting as the critic, with an adversarial brief…") and judge
+against the artifacts and evidence, never against your own intentions.
+
+## The stages
+
+The full playbook for each stage is in `references/stages.md` — **read it before
+running the stages.** The essentials:
+
+**0 · Intake → `spec.md`.** Capture: the goal in one sentence; target users and
+their jobs-to-be-done; explicit non-goals; constraints (stack, deadlines,
+platforms); references/screenshots; and a **taste north-star** — name the
+products or designers whose bar this is held to. If any of this is missing or
+ambiguous, ask now (batched).
+
+**1 · Plan → `plan.md`.** Decompose into phases. *You* size the phases based on
+the project — but bias toward **vertical, demoable slices**, because you can only
+judge usability/taste on something a person can run and see. For
+CLI/library/backend work where there's no UI to look at, size phases around
+independently testable capability instead, and say so in the plan. Each phase:
+scope, deliverable, dependencies.
+
+A phase doesn't have to be demoable if its job is to *de-risk*. When the plan
+depends on an unverified assumption — a third-party API you haven't confirmed, a
+feasibility unknown surfaced by the pre-mortem — add an explicit **spike phase**.
+A spike isn't graded by the full rubric; it has a **lightweight go/no-go gate**:
+"does this work well enough to build on, yes/no, and if no, what's the fallback?"
+Its deliverable is a findings note + a decision (GO / PIVOT-to-fallback / STOP),
+not a feature. Put spikes before the phase that depends on them.
+
+**2 · Pre-mortem → `premortem.md`.** Acting as the critic: *"It's launched and
+it failed. Why?"* Attack across technical / UX & taste / scope / data /
+integration / edge-cases / **security & secrets / cost & budget / ops &
+reliability**. Write the risks down, then **revise `plan.md`** to
+defuse the material ones. Loop — but **converge, don't just count**: stop when a
+round surfaces no new *material* risk. Cap at a few rounds so it doesn't become
+analysis paralysis before any code exists.
+
+**3 · Rubrics → `rubric.md`.** This is the keystone. *Before any code*, write one
+acceptance rubric per phase. Use the **hybrid format** (see
+`references/rubric-format.md`): a set of binary **must-pass gates** for
+correctness/non-negotiables, plus weighted **numeric quality scores** (with
+per-dimension floors) for the softer dimensions — usability, taste/visual
+design, robustness, performance, accessibility. Each item names the **evidence**
+that proves it. Include the panel framing explicitly: *"Would <the taste
+north-star experts> rate this highly? Where does it fall down?"* and keep one
+holistic dimension that can veto a high checklist score when something
+technically-passes-but-feels-wrong.
+
+→ **HUMAN CHECKPOINT.** Present `plan.md` + `rubric.md` and get approval before
+writing any code. This is the highest-leverage moment to course-correct.
+
+**4 · Build.** Implement the current phase to its deliverable. Build to the
+rubric, not around it.
+
+**5 · Critique gate → `phase-<n>-eval.md`.** Acting as the critic: run the thing,
+gather **evidence**, and score every rubric item. Prefer live evidence —
+screenshots of the running app, console logs, actual output — especially for
+taste/usability, which cannot be judged from source. If no preview/run is
+possible, you may evaluate from code, but **stamp those scores low-confidence**,
+and treat a low-confidence taste score as a reason to ask the human. Emit a
+**defect checklist** (specific, actionable) and a pass/fail verdict per the
+rubric's pass condition.
+
+**6 · Remediate.** If it didn't pass, fix the defect checklist, then **re-score**
+(append a new round to `phase-<n>-eval.md`, tracking the score delta). Bounds:
+- **≤ 3 rounds.**
+- **Early-exit** if a round doesn't improve the score (diminishing returns).
+- If still failing after 3 rounds → **escalate to the human** rather than
+  looping forever or quietly advancing.
+
+→ **HUMAN CHECKPOINT.** When a phase passes, get the human's sign-off before
+starting the next phase (this is on by default; see the config flag below). On
+escalation, hand the human the eval, the defect list, and your recommendation.
+
+**8 · Retro → `retro.md`.** After the last phase, reflect on the *methodology*:
+what slowed you down, which rubric items didn't discriminate, what to change next
+time. This is how the harness improves.
+
+## Human-in-the-loop
+
+Two distinct kinds of pause — support both. Full policy in
+`references/hitl.md`; the defaults:
+
+1. **Clarification (anytime).** The moment the goal or a requirement is genuinely
+   ambiguous, stop and ask — including mid-stage, not only at gates. **Batch**
+   the questions (ask all five at once, not five interruptions). Don't invent a
+   requirement to avoid asking; a wrong assumption compounds across phases.
+2. **Gate approval (at boundaries).** Pause for sign-off (a) after plan +
+   pre-mortem before any code, (b) at every phase gate, and (c) on escalation
+   when a phase can't pass in 3 rounds.
+
+**Config flag — `phase_gate_signoff`.** Per-gate human sign-off (1b) defaults to
+**on**, which makes this a check-in-often co-pilot — the right default for
+taste-critical work. For low-stakes builds the human can set it to **off**, and
+then phases that pass their rubric advance automatically; you still pause for
+plan approval, real ambiguity, and escalation. Record the chosen setting near the
+top of `spec.md` so it survives context loss.
+
+## Two failure modes to design against
+
+- **Rubric-gaming** — optimizing the letter of the rubric, not the spirit. The
+  holistic veto dimension (stage 3) is the guard; if it passes every checkbox but
+  a great designer would wince, it fails.
+- **Over-planning paralysis** — pre-mortem rounds with diminishing returns,
+  burning budget before code exists. The convergence rule (stage 2) is the guard.
+
+## Anti-patterns
+
+- Generating the rubric *after* building the phase. The bar must precede the work.
+- Letting the builder also be the judge with no role separation.
+- Scoring taste/usability from source code and reporting it as confident.
+- Treating "max 3 rounds" as "always do 3 rounds" — early-exit on no improvement.
+- Silently advancing past a failing phase, or looping a phase forever.
