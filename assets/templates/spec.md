@@ -3,7 +3,8 @@
 > Stage 0 artifact. Fill every field or mark N/A. If anything here is ambiguous
 > enough to change the plan, ask the human (batched) before proceeding.
 
-**Config:** `phase_gate_signoff` = on   <!-- on = sign off every phase gate; off = passing phases auto-advance -->
+**Config:** `mode` = full   <!-- full = all stages as written; lite = one pre-mortem pass, gates-only rubrics, critic as role-switch -->
+**Config:** `phase_gate_signoff` = on   <!-- on = sign off every phase gate; off = passing phases auto-advance (lite sets this off) -->
 
 ## Goal (one sentence)
 <what we're building, in a single sentence>

@@ -41,6 +41,21 @@ Use it for deliberate, quality-critical builds from a stated goal + requirements
 — especially when taste and usability matter. Don't use it for throwaway scripts
 or tiny edits; the ceremony will cost more than it returns.
 
+**Right-size the ceremony — `mode`.** This harness is not free: separate critic
+passes, multiple pre-mortem rounds, and up to three remediation rounds per phase
+add up on metered usage. Match the weight to the stakes, and record the choice in
+`spec.md`:
+
+- **`lite`** — small or low-stakes builds. One pre-mortem pass, **gates-only**
+  rubrics (skip the weighted quality scores), critic as an explicit role-switch
+  rather than a subagent, `phase_gate_signoff` off. Keeps the spine — bar before
+  code, judge against the running thing, regression check — without the full cost.
+- **`full`** (default) — taste-critical or production builds. Everything in this
+  document as written.
+
+When in doubt, start `lite` and escalate a specific phase to `full` if it proves
+to carry the project's taste or risk.
+
 ## The lifecycle at a glance
 
 ```
@@ -51,11 +66,14 @@ or tiny edits; the ceremony will cost more than it returns.
    ── HUMAN CHECKPOINT: approve plan + rubrics before any code ──
 ┌─ per phase ───────────────────────────────────────────────────────┐
 │ 4. BUILD      → implement the phase                                 │
-│ 5. CRITIQUE   → separate critic scores it against the rubric        │
+│ 5. CRITIQUE   → separate critic scores it against the rubric +      │
+│                 re-runs prior phases' gates (regression)            │
 │ 6. REMEDIATE  → fix the defect list; re-score; ≤3 rounds, early-exit│
 │    ── HUMAN CHECKPOINT: sign off the gate (or escalate on failure) ─│
 └────────────────────────────────────────────────────────────────────┘
-8. RETRO       → what to change about the *methodology* next time
+7. ACCEPTANCE  → judge the assembled WHOLE against spec.md (holistic) ┐ finish
+   ── HUMAN CHECKPOINT: final sign-off ──                             │
+8. RETRO       → what to change about the *methodology* next time     ┘
 ```
 
 At any point, if the goal or a requirement is genuinely ambiguous, **stop and
@@ -74,6 +92,7 @@ and write everything there:
 ├── premortem.md       # stage 2
 ├── rubric.md          # stage 3 (one rubric block per phase)
 ├── phase-<n>-eval.md  # stage 5/6, appended each remediation round
+├── acceptance.md      # stage 7 (whole-product gate against spec.md)
 └── retro.md           # stage 8
 ```
 
@@ -95,6 +114,13 @@ spec, rubric, and evidence — not the builder's reasoning — so it can't inher
 the builder's blind spots. If subagents aren't available, switch roles
 explicitly ("Now acting as the critic, with an adversarial brief…") and judge
 against the artifacts and evidence, never against your own intentions.
+
+In a single session the role-switched critic shares the builder's context, so its
+independence is something you have to manufacture: **before looking at what was
+built, re-derive from `spec.md` + `rubric.md` alone what the phase *should* do and
+look like**, then score the artifact against that derivation. Judging from the
+spec forward rather than the build backward is what keeps the critic from
+rubber-stamping the builder's choices.
 
 ## The stages
 
@@ -152,9 +178,14 @@ gather **evidence**, and score every rubric item. Prefer live evidence —
 screenshots of the running app, console logs, actual output — especially for
 taste/usability, which cannot be judged from source. If no preview/run is
 possible, you may evaluate from code, but **stamp those scores low-confidence**,
-and treat a low-confidence taste score as a reason to ask the human. Emit a
-**defect checklist** (specific, actionable) and a pass/fail verdict per the
-rubric's pass condition.
+and treat a low-confidence taste score as a reason to ask the human. Also
+**re-run every prior phase's must-pass gates as a regression check** — a new
+phase that breaks an earlier gate fails, however good its own rubric looks (gates
+only; you don't re-score earlier quality dimensions). Emit a **defect checklist**
+(specific, actionable) and a pass/fail verdict per the rubric's pass condition.
+**Borderline rule:** a weighted score within ~0.2 of the threshold is a tie, not
+a pass — resolve it on the holistic veto and the panel answer, or hand it to the
+human; don't let 3.51 mechanically advance.
 
 **6 · Remediate.** If it didn't pass, fix the defect checklist, then **re-score**
 (append a new round to `phase-<n>-eval.md`, tracking the score delta). Bounds:
@@ -166,6 +197,15 @@ rubric's pass condition.
 → **HUMAN CHECKPOINT.** When a phase passes, get the human's sign-off before
 starting the next phase (this is on by default; see the config flag below). On
 escalation, hand the human the eval, the defect list, and your recommendation.
+
+**7 · Acceptance → `acceptance.md`.** Passing every phase is not the same as
+delivering the goal. Once the last phase clears, judge the **assembled whole**
+against `spec.md`, not against any single phase rubric: does it deliver the
+one-sentence goal, for the named users' jobs-to-be-done, to the taste north-star?
+This is where coherence across slices, end-to-end flow, and whole-product taste
+get caught — none of which a phase gate can see. Run the full thing, gather
+evidence, answer the panel question for the product as a whole, and apply the
+**holistic veto** with teeth. A fail here is an escalation, not a silent ship.
 
 **8 · Retro → `retro.md`.** After the last phase, reflect on the *methodology*:
 what slowed you down, which rubric items didn't discriminate, what to change next
@@ -198,6 +238,9 @@ top of `spec.md` so it survives context loss.
   a great designer would wince, it fails.
 - **Over-planning paralysis** — pre-mortem rounds with diminishing returns,
   burning budget before code exists. The convergence rule (stage 2) is the guard.
+- **Phase-local blindness** — every slice passes, but the assembled product
+  doesn't cohere. The regression check (stage 5) and the whole-product acceptance
+  gate (stage 7) are the guards.
 
 ## Anti-patterns
 
@@ -206,3 +249,6 @@ top of `spec.md` so it survives context loss.
 - Scoring taste/usability from source code and reporting it as confident.
 - Treating "max 3 rounds" as "always do 3 rounds" — early-exit on no improvement.
 - Silently advancing past a failing phase, or looping a phase forever.
+- Shipping on green phases without ever judging the assembled whole (stage 7).
+- Letting a phase break an earlier phase's gate — re-run prior gates every time.
+- Reading a near-threshold weighted score as a pass — the borderline band is a tie.
