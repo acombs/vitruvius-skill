@@ -100,6 +100,24 @@ Templates for each live in `assets/templates/`. Read the template before writing
 the artifact the first time. Keep these files current — if you change the plan,
 update `plan.md`; later stages read from disk, not from memory.
 
+## Committing your work
+
+Commit at every **meaningful unit of work** — the test for "meaningful" is simple:
+*would it cost real effort to reconstruct if it were lost?* If yes, it's a commit.
+That's the whole guide; it rules out both extremes.
+
+- **Not too small:** don't commit every file save or half-written function.
+  Nothing of value is lost if an incomplete edit vanishes.
+- **Not too large:** don't let a whole multi-phase build pile up into one commit.
+  A commit that mixes three phases is impossible to revert cleanly or review.
+
+The stage boundaries are natural commit points and a good default rhythm: the
+approved `plan.md` + `rubric.md`, each phase that passes its gate, the
+remediation that fixed a failing gate, and the final acceptance. Write a message
+that says *what changed and why* (the phase, the gate it cleared), not "wip".
+**Push to origin at the same checkpoints** — a passed phase is durable work worth
+backing up; don't leave a week of green phases living only on the local machine.
+
 ## Roles: builder vs critic
 
 A builder grading its own work grades leniently and rationalizes. Keep the roles
@@ -130,7 +148,10 @@ running the stages.** The essentials:
 **0 · Intake → `spec.md`.** Capture: the goal in one sentence; target users and
 their jobs-to-be-done; explicit non-goals; constraints (stack, deadlines,
 platforms); references/screenshots; and a **taste north-star** — name the
-products or designers whose bar this is held to. If any of this is missing or
+products or designers whose bar this is held to. **Check for a design spec** — a
+`DESIGN.md`, design-system doc, Figma/tokens file, or component library in the
+project. If one exists, record its location; UI work must conform to it, and that
+conformance becomes a must-pass gate (stage 3). If any of this is missing or
 ambiguous, ask now (batched).
 
 **1 · Plan → `plan.md`.** Decompose into phases. *You* size the phases based on
@@ -165,7 +186,11 @@ design, robustness, performance, accessibility. Each item names the **evidence**
 that proves it. Include the panel framing explicitly: *"Would <the taste
 north-star experts> rate this highly? Where does it fall down?"* and keep one
 holistic dimension that can veto a high checklist score when something
-technically-passes-but-feels-wrong.
+technically-passes-but-feels-wrong. **If a design spec exists (stage 0), every
+phase with UI gets a must-pass gate:** *"UI elements conform to `DESIGN.md`
+(tokens, spacing, components, states) — Evidence: side-by-side with the spec."*
+Conformance is binary, not a taste score — drifting from a provided design system
+fails the phase regardless of how good it looks on its own.
 
 → **HUMAN CHECKPOINT.** Present `plan.md` + `rubric.md` and get approval before
 writing any code. This is the highest-leverage moment to course-correct.
@@ -181,7 +206,9 @@ possible, you may evaluate from code, but **stamp those scores low-confidence**,
 and treat a low-confidence taste score as a reason to ask the human. Also
 **re-run every prior phase's must-pass gates as a regression check** — a new
 phase that breaks an earlier gate fails, however good its own rubric looks (gates
-only; you don't re-score earlier quality dimensions). Emit a **defect checklist**
+only; you don't re-score earlier quality dimensions). **If a design spec exists,
+check UI against it directly** — pull up `DESIGN.md` and compare tokens, spacing,
+and component usage, don't eyeball it. Emit a **defect checklist**
 (specific, actionable) and a pass/fail verdict per the rubric's pass condition.
 **Borderline rule:** a weighted score within ~0.2 of the threshold is a tie, not
 a pass — resolve it on the holistic veto and the panel answer, or hand it to the

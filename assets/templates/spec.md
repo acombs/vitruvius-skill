@@ -28,5 +28,9 @@
 - <named products/designers whose bar this is held to, and the specific quality
   being borrowed — e.g. "Linear: keyboard-first, dense, fast">
 
+## Design spec
+- <path to DESIGN.md / design-system doc / tokens / component library, or "none">
+- <if present: UI work must conform to it; conformance is a must-pass gate (stage 3)>
+
 ## Open questions for the human
 - <anything unresolved; clear this before stage 1 if it affects the plan>

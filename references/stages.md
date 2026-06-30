@@ -24,6 +24,10 @@ The goal is a spec precise enough that a stranger could judge the result. Captur
   the products or designers whose bar you're holding this to (e.g. "Linear's
   density and keyboard-first feel", "Stripe's docs clarity"). Without a named
   bar, "taste" scoring is unanchored hand-waving.
+- **Design spec** — look for a `DESIGN.md`, design-system doc, design tokens, or
+  an existing component library in the project. If one exists, record its path.
+  Unlike the taste north-star (an aspirational *bar*), a design spec is a concrete
+  *contract* the UI must match — it becomes a must-pass conformance gate in stage 3.
 - **`phase_gate_signoff`** setting (on/off) — record it here.
 
 **Done when:** every field is filled or explicitly marked N/A, and nothing is
@@ -106,7 +110,9 @@ logic is unambiguous. The thinking that goes into each rubric:
 
 - **Must-pass gates** — the binary non-negotiables for this phase. "Submitting
   the form persists the record." "No console errors on load." If any fails, the
-  phase fails regardless of how pretty it is.
+  phase fails regardless of how pretty it is. **If `spec.md` names a design spec
+  and this phase has UI, one of these gates is design conformance** — the UI uses
+  the spec's tokens, spacing, components, and states, proven by a side-by-side.
 - **Quality dimensions** — usability, taste/visual design, robustness,
   performance, accessibility — scored numerically with weights and **floors** (a
   floor means "this dimension can't be below X even if the weighted total

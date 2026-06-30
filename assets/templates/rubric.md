@@ -10,6 +10,8 @@
 ### Must-pass gates  (binary; ALL must pass)
 - [ ] G1. <non-negotiable assertion>  — Evidence: <what proves it>
 - [ ] G2. <…>                          — Evidence: <…>
+<!-- If spec.md names a design spec AND this phase has UI, add: -->
+- [ ] GD. UI conforms to <DESIGN.md> (tokens, spacing, components, states)  — Evidence: side-by-side with the spec
 
 ### Quality dimensions  (1–5, weighted, with floors)  <!-- UI variant; swap for capability-slice table if no UI -->
 | Dim | Dimension      | Weight | Floor | Evidence to gather |

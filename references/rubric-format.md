@@ -50,6 +50,12 @@ own.
 
 - **Must-pass gates** are correctness and non-negotiables — the things where
   "mostly works" is the same as broken. Keep them few and sharp.
+- **Design-spec conformance is a gate, not a score.** When `spec.md` names a
+  design spec (`DESIGN.md`, tokens, a component library), every UI phase carries a
+  binary gate: the UI uses the spec's tokens, spacing, components, and states.
+  Evidence is a side-by-side against the spec. This is separate from the Taste
+  score — taste asks "is it good", conformance asks "does it match what we were
+  handed". A beautiful screen that ignores the design system still fails the gate.
 - **Weights** express what *this* phase is about. A foundation phase might weight
   Robustness 0.35 and Taste 0.10; a polish phase flips that. Weights sum to 1.0.
 - **Floors** prevent trading a great score in one dimension for a terrible one in
