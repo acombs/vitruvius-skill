@@ -136,6 +136,13 @@ Implement the current phase to its deliverable. Build to the rubric, not around
 it — if you notice the rubric is wrong (too lax, too strict, missing something),
 raise it with the human rather than silently building to a different bar.
 
+**When the spec itself changes mid-build** (the human adds or drops a
+requirement, a constraint shifts), don't just absorb it into the current phase.
+Update `spec.md`, then revisit every **downstream** rubric the change touches —
+those were written up front against the old spec — and re-approve the affected
+ones at the next gate. A spec change that silently invalidates a later rubric is
+how a build drifts from what was agreed.
+
 **Done when:** the deliverable exists and is runnable/testable enough to gather
 the evidence the rubric demands.
 
@@ -144,7 +151,10 @@ the evidence the rubric demands.
 ## Stage 5 · Critique gate → `phase-<n>-eval.md`
 
 Switch to the **critic** role, ideally a fresh subagent given only the spec, the
-phase rubric, and access to the running artifact — *not* the builder's notes.
+phase rubric, and access to the running artifact — *not* the builder's notes. In
+a single session, manufacture that independence: re-derive from `spec.md` +
+`rubric.md` what the phase *should* be before you look at what was built, then
+score the build against that derivation rather than rationalizing it.
 
 1. **Gather evidence first.** Run the app. Screenshot the relevant screens and
    states. Capture console/network logs. Run the tests. For CLI/library, capture
@@ -155,9 +165,16 @@ phase rubric, and access to the running artifact — *not* the builder's notes.
    trigger to ask the human rather than to assert a pass.
 3. **Score every rubric item** against its evidence. Answer the panel question in
    prose — specifically where it falls down, not just a number.
-4. **Emit a defect checklist** — specific and actionable ("empty state shows raw
+4. **Regression check.** Re-run every prior phase's **must-pass gates** against
+   the current build. A phase that breaks an earlier gate fails — record which
+   gate regressed in the defect checklist. Gates only; don't re-score earlier
+   quality dimensions.
+5. **Emit a defect checklist** — specific and actionable ("empty state shows raw
    `null`; needs a friendly message + icon"), not vague ("polish the UI").
-5. **Verdict** — apply the rubric's pass condition (see `rubric-format.md`).
+6. **Verdict** — apply the rubric's pass condition (see `rubric-format.md`),
+   including the borderline band: a weighted score within ~0.2 of the threshold is
+   a tie, decided on the holistic veto / panel answer or handed to the human — not
+   an automatic pass.
 
 Append each round to `phase-<n>-eval.md` so the score trajectory is visible.
 
@@ -184,6 +201,38 @@ decides.
 
 **Done when:** the phase passes and is signed off, or the human has ruled on an
 escalation.
+
+---
+
+## Stage 7 · Acceptance → `acceptance.md`
+
+Phase gates judge slices. This judges the **product**. Green on every phase can
+still add up to something that doesn't cohere — slices that each look fine but
+don't flow into each other, a tone that drifts across screens, a goal that's
+technically covered but not actually *delivered*. Stage 7 catches that.
+
+Switch to the **critic** role one last time and judge against `spec.md`, not any
+phase rubric:
+
+1. **Run the whole thing end to end** — the real user journey from the spec's
+   jobs-to-be-done, not isolated features. Gather evidence across the full flow.
+2. **Answer the panel question for the product as a whole** — would the taste
+   north-star ship *this*, not "is each screen individually okay".
+3. **Apply the holistic veto with teeth** — coherence, flow, and whole-product
+   taste are exactly what it's for here.
+4. **Check the goal is delivered** — re-read the one-sentence goal and the
+   non-goals; confirm the built thing is the thing that was asked for, and hasn't
+   quietly grown a non-goal.
+
+A fail here is an **escalation** with a recommendation (what's missing, what it
+would take), never a silent ship. For `lite` mode this can be a short paragraph
+rather than a full scored pass — but it is never skipped.
+
+→ **HUMAN CHECKPOINT** — present the whole-product verdict and evidence for final
+sign-off before calling it done.
+
+**Done when:** the assembled product is signed off against the spec, or the human
+has ruled on an acceptance escalation.
 
 ---
 

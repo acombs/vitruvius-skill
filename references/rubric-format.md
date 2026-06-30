@@ -35,9 +35,15 @@ but a great designer would wince, it FAILS. <critic justifies invoking or not>
 ### Pass condition
 PASS iff:
   • every must-pass gate passes, AND
+  • every prior phase's must-pass gates still pass (regression), AND
   • weighted quality score ≥ <threshold, e.g. 3.5 / 5>, AND
   • no quality dimension is below its floor, AND
   • the holistic veto is not invoked.
+
+BORDERLINE: if the weighted score is within ~0.2 of the threshold, treat it as a
+tie, not a pass — decide on the holistic veto and panel answer, or hand it to the
+human. The two-decimal total is not precise enough to settle a near call on its
+own.
 ```
 
 ## Notes on each part
@@ -53,9 +59,31 @@ PASS iff:
   unmeasurable — rewrite it until you can. At the gate, every score must cite the
   evidence actually gathered; a score with no evidence is a low-confidence score.
 - **Panel question** forces a *comparison to a named bar*, which is what turns
-  "looks fine" into "falls short of Linear's density here, here, and here".
-- **Holistic veto** is the anti-gaming backstop. Numeric rubrics can be gamed;
-  this dimension exists to catch "technically passes, actually bad".
+  "looks fine" into "falls short of Linear's density here, here, and here". It's a
+  graded critique — *how close to the bar, and where the gap is*.
+- **Holistic veto** is the anti-gaming backstop, and it's *binary* — a kill-switch,
+  not a grade. The panel answer can say "8/10, weak in two places" and still pass;
+  the veto fires only for "every box is ticked and it's still bad", and when it
+  fires the phase fails outright regardless of the weighted total. Panel = how
+  good; veto = is it shippable at all.
+
+## Capability-slice variant (CLI / library / backend / API)
+
+When a phase has no UI to look at, the UI dimensions above don't fit. Keep the
+same hybrid structure and pass condition, but swap the quality dimensions for what
+"taste" means without a screen — ergonomics, legibility, and durability:
+
+| Dim | Dimension              | Weight | Floor | Evidence to gather                    |
+|-----|------------------------|--------|-------|---------------------------------------|
+| Q1  | API / CLI ergonomics   | 0.25   | 3     | real invocations; signatures; defaults|
+| Q2  | Error & output quality | 0.20   | 3     | error messages on bad input; logs     |
+| Q3  | Robustness             | 0.25   | 3     | empty/malformed/huge inputs; failures |
+| Q4  | Performance            | 0.15   | 2     | timing on representative input        |
+| Q5  | Test coverage / DX     | 0.15   | 2     | tests run green; how easy to extend   |
+
+The panel question becomes *"would <the taste north-star for tools — e.g. the
+`ripgrep`/`stripe` CLI bar> rate this API highly?"* and the holistic veto asks
+whether a careful library author would be comfortable putting their name on it.
 
 ## Worked scoring example
 

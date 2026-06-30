@@ -22,6 +22,11 @@
 | Q5 Accessibility  |  |  |
 
 **Weighted score:** <x.xx>   **Any dimension below floor?** <yes/no>
+**Borderline?** <no | within ~0.2 of threshold → tie, resolve on veto/panel or ask human>
+
+### Regression check  (prior phases' must-pass gates re-run)
+- [ ] Phase 1 gates still pass — <evidence / which regressed>
+- [ ] Phase 2 gates still pass — <…>
 
 ### Panel answer
 <where it falls short of the taste north-star, specifically>
