@@ -22,6 +22,11 @@
 <do the phases flow into one another, or are they fine in isolation but disjoint?
 consistent tone, navigation, visual language, error handling across the whole?>
 
+## Operability
+<can someone who isn't the builder run this? setup/run docs followed from
+scratch; env/config documented with sane defaults; failures surface
+intelligibly (logs, error messages) rather than silently>
+
 ## Panel answer (whole product)
 "Would <taste north-star> ship THIS?" <where the assembled product falls short>
 

@@ -1,20 +1,21 @@
 ---
 name: vitruvius
 description: >-
-  A quality-gated methodology for building an app (or any substantial software
-  artifact) from a goal + requirements. Plans the work, runs an adversarial
-  pre-mortem to harden the plan, defines acceptance rubrics UP FRONT (with
-  explicit taste and usability bars), then builds in phases — each passing a
-  critique gate and a bounded remediation loop before the next, with human
-  checkpoints throughout. Use whenever the user hands over a goal and
-  requirements (maybe screenshots/references) and wants it built carefully
-  rather than fast — i.e. they want a rigorous, methodical, "do it right",
-  design-quality, or production-grade build, ask for a plan or pre-mortem before
-  coding, want success criteria or rubrics defined, or care about
-  taste/usability/UX quality. Trigger even if they don't say "vitruvius" by
-  name, as long as they're describing a deliberate, quality-critical build from
-  requirements. Do NOT use for quick one-off scripts, small edits, or when the
-  user explicitly wants speed over rigor.
+  A quality-gated methodology for building production-grade applications (or
+  any substantial software artifact) from a goal + requirements. Plans the
+  work, runs an adversarial pre-mortem to harden the plan, defines acceptance
+  rubrics UP FRONT (explicit taste, usability, robustness, and maintainability
+  bars), then builds in phases — each passing a separate critic's gate and a
+  bounded remediation loop, with human checkpoints throughout. Use whenever
+  the user hands over a goal and requirements and wants it built carefully
+  rather than fast — production-ready, production-grade, hardened,
+  ship-quality, maintainable, "do it right", for real users; or asks for a
+  plan or pre-mortem before coding, wants success criteria or rubrics defined,
+  or cares about taste/usability/UX quality. Trigger even if they don't say
+  "vitruvius" by name, as long as they're describing a deliberate,
+  quality-critical build from requirements. Do NOT use for quick one-off
+  scripts, small edits, or demo/prototype apps built to impress an audience —
+  for those use the vitruvius-demo skill.
 ---
 
 # Vitruvius
@@ -38,8 +39,12 @@ the bar to match what you built.
 ## When to use this
 
 Use it for deliberate, quality-critical builds from a stated goal + requirements
-— especially when taste and usability matter. Don't use it for throwaway scripts
-or tiny edits; the ceremony will cost more than it returns.
+— especially when taste and usability matter and the result must survive real
+users, real data, and future maintainers. Don't use it for throwaway scripts or
+tiny edits (the ceremony costs more than it returns), and don't use it for
+demo/prototype apps whose job is to impress a room — that's the sibling
+**vitruvius-demo** skill, with deliberately opposite trade-offs (happy-path
+depth over edge-case breadth).
 
 **Right-size the ceremony — `mode`.** This harness is not free: separate critic
 passes, multiple pre-mortem rounds, and up to three remediation rounds per phase
@@ -180,9 +185,13 @@ analysis paralysis before any code exists.
 **3 · Rubrics → `rubric.md`.** This is the keystone. *Before any code*, write one
 acceptance rubric per phase. Use the **hybrid format** (see
 `references/rubric-format.md`): a set of binary **must-pass gates** for
-correctness/non-negotiables, plus weighted **numeric quality scores** (with
-per-dimension floors) for the softer dimensions — usability, taste/visual
-design, robustness, performance, accessibility. Each item names the **evidence**
+correctness/non-negotiables — the standard production set: tests pass green, no
+type/lint errors, no secrets in code or logs, error/empty/loading states
+handled on every screen or path this phase touches — plus weighted **numeric
+quality scores** (with per-dimension floors) for the softer dimensions:
+usability, taste/visual design, robustness, performance, accessibility, and
+**maintainability** (a future maintainer inherits this codebase — structure,
+naming, tests as documentation). Each item names the **evidence**
 that proves it. Include the panel framing explicitly: *"Would <the taste
 north-star experts> rate this highly? Where does it fall down?"* and keep one
 holistic dimension that can veto a high checklist score when something
@@ -232,7 +241,11 @@ one-sentence goal, for the named users' jobs-to-be-done, to the taste north-star
 This is where coherence across slices, end-to-end flow, and whole-product taste
 get caught — none of which a phase gate can see. Run the full thing, gather
 evidence, answer the panel question for the product as a whole, and apply the
-**holistic veto** with teeth. A fail here is an escalation, not a silent ship.
+**holistic veto** with teeth. Also check **operability**: someone who isn't you
+can run this — setup/run documentation exists, required env/config is
+documented with sane defaults, and failure modes surface intelligibly (logs,
+error messages) rather than silently. A fail here is an escalation, not a
+silent ship.
 
 **8 · Retro → `retro.md`.** After the last phase, reflect on the *methodology*:
 what slowed you down, which rubric items didn't discriminate, what to change next
@@ -279,3 +292,6 @@ top of `spec.md` so it survives context loss.
 - Shipping on green phases without ever judging the assembled whole (stage 7).
 - Letting a phase break an earlier phase's gate — re-run prior gates every time.
 - Reading a near-threshold weighted score as a pass — the borderline band is a tie.
+- Treating maintainability as optional polish — the next developer is a user too.
+- Calling it done with no run docs and undocumented env/config — operability is
+  part of acceptance (stage 7).

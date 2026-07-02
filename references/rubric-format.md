@@ -12,17 +12,21 @@ wrote it.
 ## Phase <n> — <phase name>
 
 ### Must-pass gates  (binary; ALL must pass or the phase fails)
-- [ ] G1. <non-negotiable assertion>  — Evidence: <what proves it>
-- [ ] G2. <…>                          — Evidence: <…>
+- [ ] G1. Tests pass green                                  — Evidence: test run output
+- [ ] G2. No type/lint errors                               — Evidence: linter/compiler output
+- [ ] G3. No secrets in code, config, or logs               — Evidence: sweep of committed files
+- [ ] G4. Error/empty/loading states handled on this phase's paths — Evidence: screenshots/output per state
+- [ ] G5. <phase-specific non-negotiable>                   — Evidence: <what proves it>
 
 ### Quality dimensions  (score 1–5; weighted; each has a floor)
-| Dim | Dimension          | Weight | Floor | Evidence to gather                |
-|-----|--------------------|--------|-------|-----------------------------------|
-| Q1  | Usability          | 0.30   | 3     | screenshots of each core flow     |
-| Q2  | Taste / visual     | 0.25   | 3     | screenshots; compare to north-star|
-| Q3  | Robustness         | 0.20   | 3     | empty/error/loading states tested |
-| Q4  | Performance        | 0.10   | 2     | load time / interaction latency   |
-| Q5  | Accessibility      | 0.15   | 2     | a11y check (contrast, kbd, labels)|
+| Dim | Dimension          | Weight | Floor | Evidence to gather                 |
+|-----|--------------------|--------|-------|------------------------------------|
+| Q1  | Usability          | 0.25   | 3     | screenshots of each core flow      |
+| Q2  | Taste / visual     | 0.20   | 3     | screenshots; compare to north-star |
+| Q3  | Robustness         | 0.20   | 3     | empty/error/loading states tested  |
+| Q4  | Performance        | 0.10   | 2     | load time / interaction latency    |
+| Q5  | Accessibility      | 0.10   | 2     | a11y check (contrast, kbd, labels) |
+| Q6  | Maintainability    | 0.15   | 3     | structure/naming read; tests as docs; no dead code |
 
 ### Panel question
 "Would <taste north-star> rate this highly? Where does it fall down?"
@@ -49,7 +53,8 @@ own.
 ## Notes on each part
 
 - **Must-pass gates** are correctness and non-negotiables — the things where
-  "mostly works" is the same as broken. Keep them few and sharp.
+  "mostly works" is the same as broken. G1–G4 above are the standard production
+  set; add phase-specific gates on top. Keep them few and sharp.
 - **Design-spec conformance is a gate, not a score.** When `spec.md` names a
   design spec (`DESIGN.md`, tokens, a component library), every UI phase carries a
   binary gate: the UI uses the spec's tokens, spacing, components, and states.
@@ -60,7 +65,9 @@ own.
   Robustness 0.35 and Taste 0.10; a polish phase flips that. Weights sum to 1.0.
 - **Floors** prevent trading a great score in one dimension for a terrible one in
   another. A blazing-fast but inaccessible UI should still fail. The floor is the
-  "you can't buy your way out of this" line.
+  "you can't buy your way out of this" line. Maintainability's floor is 3, not
+  2 — in a production build, an unmaintainable phase is debt every later phase
+  compounds; the next developer is a user too.
 - **Evidence** is mandatory per item. If you can't name evidence, the item is
   unmeasurable — rewrite it until you can. At the gate, every score must cite the
   evidence actually gathered; a score with no evidence is a low-confidence score.
@@ -85,7 +92,7 @@ same hybrid structure and pass condition, but swap the quality dimensions for wh
 | Q2  | Error & output quality | 0.20   | 3     | error messages on bad input; logs     |
 | Q3  | Robustness             | 0.25   | 3     | empty/malformed/huge inputs; failures |
 | Q4  | Performance            | 0.15   | 2     | timing on representative input        |
-| Q5  | Test coverage / DX     | 0.15   | 2     | tests run green; how easy to extend   |
+| Q5  | Tests & maintainability| 0.15   | 3     | tests green + readable; easy to extend|
 
 The panel question becomes *"would <the taste north-star for tools — e.g. the
 `ripgrep`/`stripe` CLI bar> rate this API highly?"* and the holistic veto asks
@@ -93,16 +100,17 @@ whether a careful library author would be comfortable putting their name on it.
 
 ## Worked scoring example
 
-Phase 2 rubric: threshold 3.5, weights as in the table above. Critic gathers
-evidence and scores: Q1=4, Q2=3, Q3=4, Q4=5, Q5=3. All gates pass. Holistic not
-invoked.
+Phase 2 rubric: threshold 3.5, weights as in the UI table above. Critic gathers
+evidence and scores: Q1=4, Q2=3, Q3=4, Q4=5, Q5=3, Q6=4. All gates pass.
+Holistic not invoked.
 
-Weighted = 4(.30) + 3(.25) + 4(.20) + 5(.10) + 3(.15) = 1.20+0.75+0.80+0.50+0.45
-= **3.70 ≥ 3.5**. No dimension below floor. → **PASS.**
+Weighted = 4(.25) + 3(.20) + 4(.20) + 5(.10) + 3(.10) + 4(.15)
+= 1.00+0.60+0.80+0.50+0.30+0.60 = **3.80 ≥ 3.5**. No dimension below floor.
+→ **PASS.**
 
 Counter-example: same scores but Q2 (Taste) = 2. Floor for Q2 is 3 → **FAIL on
-floor**, even though the weighted total (3.70 − 0.25 = 3.45… still close) might
-look survivable. The floor catches the ugly-but-fast trap.
+floor**, even though the weighted total (3.80 − 0.20 = 3.60) still clears the
+threshold. The floor catches the ugly-but-fast trap.
 
 ## Low-confidence scores
 

@@ -108,15 +108,19 @@ The keystone. Write one acceptance rubric **per phase, before any code**. Format
 and pass-condition live in `rubric-format.md` — follow it exactly so the gate
 logic is unambiguous. The thinking that goes into each rubric:
 
-- **Must-pass gates** — the binary non-negotiables for this phase. "Submitting
-  the form persists the record." "No console errors on load." If any fails, the
-  phase fails regardless of how pretty it is. **If `spec.md` names a design spec
-  and this phase has UI, one of these gates is design conformance** — the UI uses
-  the spec's tokens, spacing, components, and states, proven by a side-by-side.
+- **Must-pass gates** — the binary non-negotiables for this phase. Start from
+  the standard production set (tests green, no type/lint errors, no secrets,
+  error/empty/loading states handled — see `rubric-format.md`), then add
+  phase-specific gates: "Submitting the form persists the record." "No console
+  errors on load." If any fails, the phase fails regardless of how pretty it
+  is. **If `spec.md` names a design spec and this phase has UI, one of these
+  gates is design conformance** — the UI uses the spec's tokens, spacing,
+  components, and states, proven by a side-by-side.
 - **Quality dimensions** — usability, taste/visual design, robustness,
-  performance, accessibility — scored numerically with weights and **floors** (a
-  floor means "this dimension can't be below X even if the weighted total
-  passes", so you can't paper over an ugly UI with fast load times).
+  performance, accessibility, maintainability — scored numerically with weights
+  and **floors** (a floor means "this dimension can't be below X even if the
+  weighted total passes", so you can't paper over an ugly UI with fast load
+  times, or a rushed codebase with a pretty one).
 - **Evidence** — for *every* item, name what proves it. "Screenshot of empty
   state." "Lighthouse a11y ≥ 90." Evidence is what stops the gate from being
   vibes.
@@ -229,6 +233,10 @@ phase rubric:
 4. **Check the goal is delivered** — re-read the one-sentence goal and the
    non-goals; confirm the built thing is the thing that was asked for, and hasn't
    quietly grown a non-goal.
+5. **Check operability** — someone who isn't the builder can run this: setup/run
+   docs exist and were followed from scratch, required env/config is documented
+   with sane defaults, failures surface intelligibly (logs, error messages)
+   rather than silently. Production-grade means inheritable.
 
 A fail here is an **escalation** with a recommendation (what's missing, what it
 would take), never a silent ship. For `lite` mode this can be a short paragraph

@@ -1,8 +1,13 @@
 # Vitruvius
 
-A Claude Code skill — a quality-gated methodology for building an app (or any
-substantial software artifact) from a goal and requirements, when you want it
-done *right* rather than fast.
+A Claude Code skill — a quality-gated methodology for building
+**production-grade applications** (or any substantial software artifact) from
+a goal and requirements, when you want it done *right* rather than fast.
+
+Two variants share this repo: `main` (this branch) is **vitruvius**, tuned for
+production builds — real users, real data, future maintainers. The
+`vitruvius-demo` branch is **vitruvius-demo**, tuned for demo/prototype apps
+for executive audiences — same spine, deliberately opposite trade-offs.
 
 ## What it's for
 
@@ -17,16 +22,19 @@ In practice it:
 2. **Pre-mortems** the plan — an adversarial "it shipped and failed, why?" pass —
    and hardens it.
 3. **Writes acceptance rubrics up front**, before any code, with explicit
-   correctness gates and weighted taste/usability/robustness scores.
+   correctness gates (tests green, no lint/type errors, no secrets, all states
+   handled) and weighted taste/usability/robustness/maintainability scores.
 4. **Builds phase by phase**, each one gated by a separate *critic* role that
    scores it against the rubric and the running artifact, with a bounded
    remediation loop and human checkpoints throughout.
-5. **Accepts the assembled whole** against the original spec, then **retros** the
+5. **Accepts the assembled whole** against the original spec — including
+   operability: someone who isn't the builder can run it — then **retros** the
    methodology itself.
 
 Use it for deliberate, quality-critical builds where taste and usability matter.
-Don't use it for throwaway scripts or tiny edits — the ceremony costs more than it
-returns. (A `lite` mode exists for lower-stakes work.)
+Don't use it for throwaway scripts or tiny edits — the ceremony costs more than
+it returns. (A `lite` mode exists for lower-stakes work.) For demo/prototype
+builds meant to impress a room, use the `vitruvius-demo` branch instead.
 
 ## Who was Vitruvius?
 
@@ -48,7 +56,7 @@ references/
   └── hitl.md                # human-in-the-loop policy
 assets/templates/            # on-disk artifacts the build writes to .vitruvius/
   ├── spec.md  plan.md  premortem.md  rubric.md
-  ├── phase-eval.md  acceptance.md
+  ├── phase-eval.md  acceptance.md  retro.md
 ```
 
 ## Using it

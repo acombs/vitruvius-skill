@@ -15,11 +15,12 @@
 ### Quality scores
 | Dim | Score (1–5) | Evidence / reasoning |
 |-----|-------------|----------------------|
-| Q1 Usability      |  |  |
-| Q2 Taste / visual |  |  |
-| Q3 Robustness     |  |  |
-| Q4 Performance    |  |  |
-| Q5 Accessibility  |  |  |
+| Q1 Usability       |  |  |
+| Q2 Taste / visual  |  |  |
+| Q3 Robustness      |  |  |
+| Q4 Performance     |  |  |
+| Q5 Accessibility   |  |  |
+| Q6 Maintainability |  |  |
 
 **Weighted score:** <x.xx>   **Any dimension below floor?** <yes/no>
 **Borderline?** <no | within ~0.2 of threshold → tie, resolve on veto/panel or ask human>
