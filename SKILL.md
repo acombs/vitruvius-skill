@@ -225,7 +225,8 @@ and component usage, don't eyeball it. **If the phase has a web UI, run the
 (contrast, overflow, console errors) becomes must-pass gates, and its
 code-blind judge's scores feed the rubric's taste/visual-design rows against
 the profile chosen at intake. In `lite` mode run its judge as a role-switch
-rather than a subagent. Emit a **defect checklist**
+rather than a subagent. If venustas isn't installed, fall back to this
+stage's own screenshot-based taste evaluation as written. Emit a **defect checklist**
 (specific, actionable) and a pass/fail verdict per the rubric's pass condition.
 **Borderline rule:** a weighted score within ~0.2 of the threshold is a tie, not
 a pass — resolve it on the holistic veto and the panel answer, or hand it to the

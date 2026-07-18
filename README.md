@@ -46,6 +46,17 @@ That's the skill's quality bar, made operational: the rubrics judge **robustness
 (firmitas), **usability** (utilitas), and **taste** (venustas), and a phase
 advances only when all three hold.
 
+## Pairs with venustas
+
+For web-UI phases, the stage-5 critique gate can delegate its taste portion to
+the sibling [venustas](https://github.com/acombs/venustas-skill) skill — an
+aesthetic gate that captures the running page, runs deterministic design checks
+(contrast, overflow, console errors), and convenes a code-blind judge against a
+named style profile chosen at intake. Each skill works without the other:
+vitruvius falls back to its own screenshot-based taste evaluation when venustas
+isn't installed, and venustas runs standalone on any project ("does this look
+good?") without the vitruvius ceremony.
+
 ## Layout
 
 ```
