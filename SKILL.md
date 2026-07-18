@@ -153,7 +153,10 @@ running the stages.** The essentials:
 **0 · Intake → `spec.md`.** Capture: the goal in one sentence; target users and
 their jobs-to-be-done; explicit non-goals; constraints (stack, deadlines,
 platforms); references/screenshots; and a **taste north-star** — name the
-products or designers whose bar this is held to. **Check for a design spec** — a
+products or designers whose bar this is held to. For a web UI, express the
+north-star as a **venustas style profile** (a file in the `venustas` skill's
+`profiles/` directory, or a custom one from its template) — that makes the
+taste bar enforceable at stage 5 instead of vibes. **Check for a design spec** — a
 `DESIGN.md`, design-system doc, Figma/tokens file, or component library in the
 project. If one exists, record its location; UI work must conform to it, and that
 conformance becomes a must-pass gate (stage 3). If any of this is missing or
@@ -217,7 +220,12 @@ and treat a low-confidence taste score as a reason to ask the human. Also
 phase that breaks an earlier gate fails, however good its own rubric looks (gates
 only; you don't re-score earlier quality dimensions). **If a design spec exists,
 check UI against it directly** — pull up `DESIGN.md` and compare tokens, spacing,
-and component usage, don't eyeball it. Emit a **defect checklist**
+and component usage, don't eyeball it. **If the phase has a web UI, run the
+`venustas` skill as the taste portion of this gate**: its deterministic audit
+(contrast, overflow, console errors) becomes must-pass gates, and its
+code-blind judge's scores feed the rubric's taste/visual-design rows against
+the profile chosen at intake. In `lite` mode run its judge as a role-switch
+rather than a subagent. Emit a **defect checklist**
 (specific, actionable) and a pass/fail verdict per the rubric's pass condition.
 **Borderline rule:** a weighted score within ~0.2 of the threshold is a tie, not
 a pass — resolve it on the holistic veto and the panel answer, or hand it to the
